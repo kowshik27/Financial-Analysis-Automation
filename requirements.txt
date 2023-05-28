@@ -1,0 +1,7 @@
+numpy==1.24.3
+pandas==2.0.1
+yfinance==0.2.18
+yahoo_fin==0.8.9.1
+python-dotenv==1.0.0
+pandas_datareader==0.10.0
+excel-writer==1.0.6
