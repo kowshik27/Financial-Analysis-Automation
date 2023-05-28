@@ -1,5 +1,6 @@
 import yfinance as yf
 from yahoo_fin import stock_info as si
+from mail_sender import send_mail
 
 import pandas as pd
 import numpy as np
@@ -159,3 +160,10 @@ for stock_data in stock_data_objects:
 print(df, "\n", type(df))
 
 df.to_excel(f"Financial Analysis - {start_date}.xlsx")
+
+
+sender = "Kowshik Kumar"
+date = start_date
+file_path = f"Financial Analysis - {start_date}.xlsx"
+subject = f"Financial Analysis for Stocks on {start_date}"
+send_mail(sender, date, file_path)
