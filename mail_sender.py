@@ -10,10 +10,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def send_mail(sender, date, filepath = None):
+def send_mail(sender, user_email, date, filepath = None):
 
     sender_mail = os.environ['sender_mail']
-    reciever_mail = os.environ['reciever_mail']
+    reciever_mail = user_email
 
     # Message Head
     message = MIMEMultipart()
@@ -22,14 +22,11 @@ def send_mail(sender, date, filepath = None):
     message['Subject'] = f"Financial Analysis for Stocks on {date}"
 
     # Email Body 
-    body = f'''Hi There,
-
-    The Automated Financial Analysis of {date} for the top 3 tech stocks.
-
-    Please find the attachment excel file.
-
-    Regards,
-    {sender}'''
+    body = f'''Hi There,\n\n\
+The Automated Financial Analysis of {date} for the top 3 tech stocks.\n\n\
+Please find the attachment excel file.\n\n\
+Regards,\n\
+{sender}'''
     message.attach(MIMEText(body, 'plain'))
 
     # Opening the Excel file

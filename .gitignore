@@ -1,3 +1,4 @@
 #SECRET FILES
 .env
 .vscode
+__pycache__

@@ -11,8 +11,35 @@ import requests
 
 load_dotenv()
 
+from flask import Flask, request
+from flask_restful import Resource, Api, reqparse
+
+
+app = Flask("StockAnalysisAPI")
+api = Api(app)
+
+
 def test_print(data):
     print("\n\n Test \n\n", data, "\n\n\n")
+
+
+# Creating a parser object for user-email 
+parser = reqparse.RequestParser()
+parser.add_argument('email', type=str, required=True, help='Email is required')
+
+class FinancialAnalysisAPI(Resource):
+    def get(self):
+        return "Financial Automation API Working"
+    def post(self):
+        args = parser.parse_args()
+        user_email = args['email']
+        financial_analysis_reports(user_email)
+        return {f'message': 'Automated Financial analysis completed and email sent to your mail.'}, 201
+    
+
+# Add resource for API endpoint
+api.add_resource(FinancialAnalysisAPI, '/')
+
 
 class AlphaVantageAPI:
 
@@ -47,25 +74,24 @@ class FinancialAnalysis:
         # Retrieve historical stock data from Yahoo Finance API
         self.stock_data = yf.download(self.ticker_symbol, start=self.start_date, end=self.end_date)
         self.stock_info = yf.Ticker(self.ticker_symbol).info
-        # print(f"\n Retrievied Stock Data for the {self.ticker_symbol} stock \n", self.stock_data)
+        
 
-    def calculate_metrics(self, total_market_cap):
+    def calculate_metrics(self, data):
 
         financial_reports = AlphaVantageAPI(os.environ['api_key'])
-        company_overview = financial_reports.get_stock_metrics_data("OVERVIEW",self.ticker_symbol)
+
         income_statement = financial_reports.get_stock_metrics_data("INCOME_STATEMENT",self.ticker_symbol)
-        cash_flow_statement = financial_reports.get_stock_metrics_data("CASH_FLOW", self.ticker_symbol)
+        try:
+            is_quarterly_reports = income_statement["quarterlyReports"]
+            is_annual_reports = income_statement["annualReports"]
+        except Exception as e:
+            print(e)
 
-
-
-        is_quarterly_reports = income_statement["quarterlyReports"]
-        is_annual_reports = income_statement["annualReports"]
-        cfs_annual_reports = cash_flow_statement["annualReports"]
         
         self.stock_data['Symbol'] = self.ticker_symbol
 
         # For S&P 500 weight (%)
-        self.stock_data['SP500_Weight'] = round(self.stock_info['marketCap']*100/total_market_cap,2)
+        self.stock_data['SP500_Weight'] = round(self.stock_info['marketCap']*100/data['total_market_cap'],2)
 
         # For Last close price ($)
         self.stock_data['Last_Close_Price'] = round(self.stock_data['Close'],2)
@@ -82,9 +108,9 @@ class FinancialAnalysis:
 
         # For EV/(EBITDA - CapEx) metric
 
-        this_year_ev_ebitda_ratio = float(company_overview['EVToEBITDA'])
+        this_year_ev_ebitda_ratio = data['ev_to_ebitda'][self.ticker_symbol]
         ebitda_last_year = int(is_annual_reports[0]['ebitda'])
-        capital_expenditures = int(cfs_annual_reports[0]['capitalExpenditures'])
+        capital_expenditures = data['cap_exp'][self.ticker_symbol]
 
         self.stock_data['Company_Valuation_Performance'] = (this_year_ev_ebitda_ratio*ebitda_last_year)/(ebitda_last_year - capital_expenditures)
 
@@ -118,52 +144,57 @@ class FinancialAnalysis:
 
 
 
-# Define the ticker symbols and date range
-ticker_symbols = ["GOOG", "AMZN", "AAPL"]
-start_date = "2023-05-19"
-end_date = "2023-05-20"
+def financial_analysis_reports(user_email):
+    # Define the ticker symbols and date range
+    ticker_symbols = ["GOOG", "AMZN", "AAPL"]
+    start_date = "2023-05-19"
+    end_date = "2023-05-20"
 
-# Create StockData objects for each ticker symbol
-stock_data_objects = []
-
-# table=pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
-# df = table[0]
-
-# sp_tickers = ["GOOG", "AMZN", "AAPL"] #[ticker for ticker in df['Symbol']]
-
-# stocks_market_cap = []
-# for ticker in sp_tickers:
-#     try: 
-#         stocks_market_cap.append(yf.Ticker(ticker).info["marketCap"])
-#     except:
-#         print('\nError with: ', ticker)
+    # Create StockData objects for each ticker symbol
+    stock_data_objects = []
 
 
-sp500index_market_cap =  38010268372736
+# hard coded values as direct apis not available and free api limit exceeded in Vantage API
+    
+    data = {
+   'ev_to_ebitda' : {
+    "GOOG":12.16,
+    "AMZN":19.3,
+    "AAPL":17.53
+    },
+    'cap_exp':{
+    "GOOG":31485000000,
+    "AMZN":63645000000,
+    "AAPL":10708000000,
+    },
+    'total_market_cap':38010268372736,
+    }
 
 
 
+    for ticker_symbol in ticker_symbols:
+        stock_data = FinancialAnalysis(ticker_symbol, start_date, end_date)
+        stock_data.retrieve_stock_data()
+        stock_data.calculate_metrics(data)
+        stock_data_objects.append(stock_data)
 
-for ticker_symbol in ticker_symbols:
-    stock_data = FinancialAnalysis(ticker_symbol, start_date, end_date)
-    stock_data.retrieve_stock_data()
-    stock_data.calculate_metrics(sp500index_market_cap)
-    stock_data_objects.append(stock_data)
+    # # Get and print the metrics data for each StockData object
+    df = pd.DataFrame()
+    for stock_data in stock_data_objects:
+        metrics_data = stock_data.get_metrics_data()
+        df = pd.concat([df,metrics_data], ignore_index=True)
 
-# # Get and print the metrics data for each StockData object
-df = pd.DataFrame()
-for stock_data in stock_data_objects:
-    metrics_data = stock_data.get_metrics_data()
-    df = pd.concat([df,metrics_data], ignore_index=True)
-    print('\n\n')
+    print(df, "\n", type(df))
 
-print(df, "\n", type(df))
-
-df.to_excel(f"Financial Analysis - {start_date}.xlsx")
+    df.to_excel(f"Financial Analysis - {start_date}.xlsx", index  = False)
 
 
-sender = "Kowshik Kumar"
-date = start_date
-file_path = f"Financial Analysis - {start_date}.xlsx"
-subject = f"Financial Analysis for Stocks on {start_date}"
-send_mail(sender, date, file_path)
+    sender = "Kowshik Kumar"
+    date = start_date
+    file_path = f"Financial Analysis - {start_date}.xlsx"
+    send_mail(sender, user_email, date, file_path)
+
+
+
+if __name__ == '__main__':
+    app.run(debug = True, port = 3000)
