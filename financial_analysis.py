@@ -11,34 +11,34 @@ import requests
 
 load_dotenv()
 
-from flask import Flask, request
-from flask_restful import Resource, Api, reqparse
+# from flask import Flask, request
+# from flask_restful import Resource, Api, reqparse
 
 
-app = Flask("StockAnalysisAPI")
-api = Api(app)
+# app = Flask("StockAnalysisAPI")
+# api = Api(app)
 
 
 def test_print(data):
     print("\n\n Test \n\n", data, "\n\n\n")
 
 
-# Creating a parser object for user-email 
-parser = reqparse.RequestParser()
-parser.add_argument('email', type=str, required=True, help='Email is required')
+# # Creating a parser object for user-email 
+# parser = reqparse.RequestParser()
+# parser.add_argument('email', type=str, required=True, help='Email is required')
 
-class FinancialAnalysisAPI(Resource):
-    def get(self):
-        return "Financial Automation API Working"
-    def post(self):
-        args = parser.parse_args()
-        user_email = args['email']
-        financial_analysis_reports(user_email)
-        return {f'message': 'Automated Financial analysis completed and email sent to your mail.'}, 201
+# class FinancialAnalysisAPI(Resource):
+#     def get(self):
+#         return "Financial Automation API Working"
+#     def post(self):
+#         args = parser.parse_args()
+#         user_email = args['email']
+#         financial_analysis_reports(user_email)
+#         return {f'message': 'Automated Financial analysis completed and email sent to your mail.'}, 201
     
 
-# Add resource for API endpoint
-api.add_resource(FinancialAnalysisAPI, '/')
+# # Add resource for API endpoint
+# api.add_resource(FinancialAnalysisAPI, '/')
 
 
 class AlphaVantageAPI:
@@ -196,5 +196,5 @@ def financial_analysis_reports(user_email):
 
 
 
-if __name__ == '__main__':
-    app.run(debug = True, port = 3000)
+# if __name__ == '__main__':
+#     app.run(debug = True, port = 3000)

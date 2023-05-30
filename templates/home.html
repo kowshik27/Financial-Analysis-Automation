@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Financial Analysis</title>
+    <!-- <style>
+        /* CSS for the pop-ups */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+        }
+    </style> -->
+    <style>
+        body {
+            background-image: linear-gradient(to right, #6dd5fa,#2980b9);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        
+        .form-container {
+            background: linear-gradient(to bottom right, #e5f2ff, #b3d1ff);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .form-container input[type="email"] {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: none;
+            align-items: center;
+        }
+        
+        .form-container button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        #loading-message {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#email-form").submit(function(e) {
+                e.preventDefault();
+                $("#loading-message").show();
+                $.ajax({
+                    url: "/automated-analysis",
+                    type: "POST",
+                    data: $(this).serialize(),
+                    success: function(response) {
+                            // Financial reports generated successfully
+                            $('#loading-message').hide();
+                            window.location.href = "/success";
+                    },
+                    error: function() {
+                        $("#loading-message").hide();
+                        alert("An error occurred. Please try again.");
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    
+    <div class="form-container">
+        <h2>Email Form</h2>
+        <form id="email-form" method="POST" action="/automated-analysis">
+            <input type="email" name="email" placeholder="Email" required>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    
+    <!-- Loading message -->
+    <div id="loading-message">
+        <p> Analysis Reports are Loading...</p>
+    </div>
+
+    
+</body>
+</html>
