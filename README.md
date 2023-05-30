@@ -25,11 +25,30 @@ This project automates the financial analysis, generates an excel analysis repor
 git clone https://github.com/kowshik27/Financial-Analysis-Automation.git
 ```
 
-3. Install the dependencies
+3. Install and activate virtual environment
+
+
+- Activating Virtual env in Linux/Ubuntu
+```ssl
+source <venv_name>/bin/activate
+```
+- For Windows
+```ssl
+venv\Scripts\activate
+```
+
+4. Install the dependencies
 
 ```python
 pip install -r requirements.txt
 ```
+
+5. Run the Flask App
+```python
+python app.py
+```
+
+
 ### Environment Variables
 
 To run this project, you will need to add the following environment variables to your .env file
