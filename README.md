@@ -55,5 +55,10 @@ To run this project, you will need to add the following environment variables to
 
  1. `api_key` for AlphaVantageAPI. Get a free api at [this link](https://www.alphavantage.co/support/#api-key). 
 
- 2. `smtp password` and `sender mail/smtp username` using any smtp server. I have used google smtp server. Refer this video for activat
+ 2. `smtp password` and `sender mail/smtp username` using any smtp server. I have used google smtp server. 
+
+### The Generated Excel file
+![image](https://github.com/kowshik27/Financial-Analysis-Automation/assets/63949643/01915282-bec6-4358-adad-f583b9745b93)
+
+
 
