@@ -3,7 +3,6 @@ from yahoo_fin import stock_info as si
 from mail_sender import send_mail
 
 import pandas as pd
-import numpy as np
 from dotenv import load_dotenv
 import os
 import json
