@@ -6,3 +6,4 @@ python-dotenv==1.0.0
 pandas_datareader==0.10.0
 Flask==2.3.2
 Flask-RESTful==0.3.10
+gunicorn==20.1.0

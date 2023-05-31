@@ -78,7 +78,7 @@ class FinancialAnalysis:
 
     def calculate_metrics(self, data):
 
-        financial_reports = AlphaVantageAPI(os.environ['api_key'])
+        financial_reports = AlphaVantageAPI(os.getenv('api_key'))
 
         income_statement = financial_reports.get_stock_metrics_data("INCOME_STATEMENT",self.ticker_symbol)
         try:
@@ -147,8 +147,8 @@ class FinancialAnalysis:
 def financial_analysis_reports(user_email):
     # Define the ticker symbols and date range
     ticker_symbols = ["GOOG", "AMZN", "AAPL"]
-    start_date = "2023-05-19"
-    end_date = "2023-05-20"
+    start_date = "2023-05-25"
+    end_date = "2023-05-26"
 
     # Create StockData objects for each ticker symbol
     stock_data_objects = []

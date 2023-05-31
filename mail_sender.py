@@ -12,7 +12,7 @@ load_dotenv()
 
 def send_mail(sender, user_email, date, filepath = None):
 
-    sender_mail = os.environ['sender_mail']
+    sender_mail = os.getenv('sender_mail')
     reciever_mail = user_email
 
     # Message Head
@@ -45,8 +45,8 @@ Regards,\n\
     # SMTP server configuration
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
-    smtp_username = os.environ['smtp_username']
-    smtp_password = os.environ['smtp_password']
+    smtp_username = os.getenv('smtp_username')
+    smtp_password = os.getenv('smtp_password')
 
     # Creating an SMTP connection
     smtp_obj = smtplib.SMTP(smtp_server, smtp_port)
