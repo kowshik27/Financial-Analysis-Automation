@@ -1,5 +1,4 @@
 import yfinance as yf
-from yahoo_fin import stock_info as si
 from mail_sender import send_mail
 
 import pandas as pd
@@ -67,12 +66,11 @@ class FinancialAnalysis:
         self.start_date = start_date
         self.end_date = end_date
         self.stock_data = None
-        self.stock_info = None
 
     def retrieve_stock_data(self):
         # Retrieve historical stock data from Yahoo Finance API
         self.stock_data = yf.download(self.ticker_symbol, start=self.start_date, end=self.end_date)
-        self.stock_info = yf.Ticker(self.ticker_symbol).info
+        print("Ticker is: ", self.ticker_symbol, "\n", self.stock_data)
         
 
     def calculate_metrics(self, data):
@@ -90,7 +88,7 @@ class FinancialAnalysis:
         self.stock_data['Symbol'] = self.ticker_symbol
 
         # For S&P 500 weight (%)
-        self.stock_data['SP500_Weight'] = round(self.stock_info['marketCap']*100/data['total_market_cap'],2)
+        self.stock_data['SP500_Weight'] = round(data['market_caps'][self.ticker_symbol]*100/data['total_market_cap'],2)
 
         # For Last close price ($)
         self.stock_data['Last_Close_Price'] = round(self.stock_data['Close'],2)
@@ -165,6 +163,11 @@ def financial_analysis_reports(user_email):
     "GOOG":31485000000,
     "AMZN":63645000000,
     "AAPL":10708000000,
+    },
+    'market_caps':{
+    "GOOG": 1573625110631.27,                                                      
+    "AMZN": 1246736802625.74,
+    "AAPL": 2797555752233.37,
     },
     'total_market_cap':38010268372736,
     }
